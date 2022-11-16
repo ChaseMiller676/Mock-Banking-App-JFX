@@ -3,14 +3,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Server {
     static PrintWriter serverWriter;
     static BufferedReader serverReader;
-    static FileWriter fileWriter;
+    static PrintWriter fileWriter;
     static BufferedReader fileReader;
     private static final HashMap<String, String> accounts = new HashMap<>();
+    private static final ArrayList<String> keyRing = new ArrayList<>();
 
     public static void main(String[] args){
 
@@ -20,12 +20,12 @@ public class Server {
         ){
             serverWriter = new PrintWriter(client.getOutputStream(), true);
             serverReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            fileWriter = new FileWriter("AccountBank.txt");
+            fileWriter = new PrintWriter("src/main/resources/AccountBank.txt");
 
             loadAccountBank();
-            String usernameFieldInput = "";
-            String passwordFieldInput = "";
-            String menuOption = "";
+            String usernameFieldInput;
+            String passwordFieldInput;
+            String menuOption;
 
             while(client.isConnected()) {
                 menuOption = serverReader.readLine();
@@ -35,41 +35,48 @@ public class Server {
                     passwordFieldInput = serverReader.readLine();
 
                     if (clientLogin(usernameFieldInput, passwordFieldInput)) {
-                        serverWriter.println("0");
+                        serverWriter.println(0);
                     } else {
-                        serverWriter.println("1");
+                        serverWriter.println(1);
                     }
                 }
-                else if(menuOption.equals("create")){
+                if(menuOption.equals("create")){
+                    usernameFieldInput = serverReader.readLine();
+                    passwordFieldInput = serverReader.readLine();
+
                     if(createAccount(usernameFieldInput, passwordFieldInput) == 0){
                         saveAccounts();
-                        serverWriter.println("2");
+                        serverWriter.println(0);
                     }
                     else{
-                        serverWriter.println("3");
+                        serverWriter.println(1);
                     }
                 }
             }
+
+            fileWriter.close();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
     private static void loadAccountBank() throws IOException{
-        fileReader = new BufferedReader(new FileReader(Objects.requireNonNull(Server.class.getResource("AccountBank.txt")).getPath()));
+        fileReader = new BufferedReader(new FileReader("src/main/resources/AccountBank.txt"));
 
         String line;
         while((line = fileReader.readLine()) != null){
             String[] lineTokens = line.split("\\|");
             accounts.put(lineTokens[0], lineTokens[1]);
+            keyRing.add(lineTokens[0]);
         }
 
         fileReader.close();
     }
 
     private static int createAccount(String usernameFieldText, String passwordFieldText){
-        if(!accounts.containsKey(usernameFieldText)){
+        if(!usernameFieldText.isBlank() && !passwordFieldText.isBlank() && !keyRing.contains(usernameFieldText)){
             accounts.put(usernameFieldText, passwordFieldText);
+            keyRing.add(usernameFieldText);
             return 0;
         }
         else{
@@ -77,14 +84,12 @@ public class Server {
         }
     }
 
-    private static void saveAccounts() throws IOException{
-        String[] keyRing = accounts.keySet().toArray(new String[0]);
-
+    private static void saveAccounts(){
         for (String key : keyRing) {
-            fileWriter.write(key + '|' + accounts.get(key) + '\n');
+            fileWriter.println(key + '|' + accounts.get(key));
         }
 
-        fileWriter.close();
+        fileWriter.flush();
     }
 
     private static boolean clientLogin(String usernameFieldInput, String passwordFieldInput){

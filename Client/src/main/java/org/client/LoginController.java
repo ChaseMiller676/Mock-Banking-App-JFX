@@ -21,8 +21,8 @@ public class LoginController {
     private Label message;
     static BufferedReader clientReader;
     static PrintWriter clientWriter;
-
     static String serverOutput;
+
     static void initObjects(){
         try {
             clientReader = new BufferedReader(new InputStreamReader(Client.client.getInputStream()));
@@ -32,7 +32,7 @@ public class LoginController {
         }
     }
 
-    static void handleInput(){
+    static String handleInput(){
         Task<String> input = new Task<>() {
             @Override
             protected String call() throws Exception {
@@ -43,19 +43,18 @@ public class LoginController {
 
         //Ignore this warning
         new Thread(input).run();
+        return serverOutput;
     }
 
     @FXML
     public void validate(ActionEvent event){
+        clientWriter.println("login");
         clientWriter.println(usernameField.getText());
         clientWriter.println(passwordField.getText());
-        handleInput();
 
-        switch (serverOutput){
+        switch (handleInput()){
             case "0": message.setText("Logging in..."); break;
             case "1": message.setText("Login info was incorrect/Account does not exit"); break;
-            case "2": message.setText("Account Created"); break;
-            case "3": message.setText("Account Name is Taken"); break;
             default: message.setText("Error");
         }
     }
@@ -63,5 +62,13 @@ public class LoginController {
     @FXML
     public void createAccount(ActionEvent event){
         clientWriter.println("create");
+        clientWriter.println(usernameField.getText());
+        clientWriter.println(passwordField.getText());
+
+        switch (handleInput()){
+            case "0": message.setText("Account Created"); break;
+            case "1": message.setText("Account Name is Taken"); break;
+            default: message.setText("Error");
+        }
     }
 }
