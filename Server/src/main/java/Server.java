@@ -3,14 +3,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Server {
     static PrintWriter serverWriter;
     static BufferedReader serverReader;
-    static PrintWriter fileWriter;
-    static BufferedReader fileReader;
-    private static final HashMap<String, String> accounts = new HashMap<>();
-    private static final ArrayList<String> keyRing = new ArrayList<>();
+    static final File accountBank = new  File("src/main/resources/AccountBank.txt");
+    static final HashMap<String, String> accounts = new HashMap<>();
+    static final ArrayList<String> keyRing = new ArrayList<>();
 
     public static void main(String[] args){
 
@@ -20,7 +20,6 @@ public class Server {
         ){
             serverWriter = new PrintWriter(client.getOutputStream(), true);
             serverReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            fileWriter = new PrintWriter("src/main/resources/AccountBank.txt");
 
             loadAccountBank();
             String usernameFieldInput;
@@ -54,20 +53,21 @@ public class Server {
                 }
             }
 
-            fileWriter.close();
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private static void loadAccountBank() throws IOException{
-        fileReader = new BufferedReader(new FileReader("src/main/resources/AccountBank.txt"));
+    private static void loadAccountBank() throws FileNotFoundException{
+        Scanner fileReader = new Scanner(accountBank);
 
-        String line;
-        while((line = fileReader.readLine()) != null){
-            String[] lineTokens = line.split("\\|");
-            accounts.put(lineTokens[0], lineTokens[1]);
+        int i = 1;
+        while(fileReader.hasNextLine()){
+            System.out.printf("Loop %d\n", i);
+            String[] lineTokens = fileReader.nextLine().split("\\|");
             keyRing.add(lineTokens[0]);
+            accounts.put(lineTokens[0], lineTokens[1]);
+            i++;
         }
 
         fileReader.close();
@@ -84,12 +84,15 @@ public class Server {
         }
     }
 
-    private static void saveAccounts(){
+    private static void saveAccounts() throws IOException {
+
+        PrintWriter fileWriter = new PrintWriter(new FileWriter(accountBank), true);
+
         for (String key : keyRing) {
             fileWriter.println(key + '|' + accounts.get(key));
         }
 
-        fileWriter.flush();
+        fileWriter.close();
     }
 
     private static boolean clientLogin(String usernameFieldInput, String passwordFieldInput){

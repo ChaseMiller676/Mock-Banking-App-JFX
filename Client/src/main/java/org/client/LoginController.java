@@ -32,6 +32,7 @@ public class LoginController {
         }
     }
 
+    @SuppressWarnings("All")
     static String handleInput(){
         Task<String> input = new Task<>() {
             @Override
@@ -41,12 +42,12 @@ public class LoginController {
             }
         };
 
-        //Ignore this warning
         new Thread(input).run();
         return serverOutput;
     }
 
     @FXML
+    @SuppressWarnings("unused")
     public void validate(ActionEvent event){
         clientWriter.println("login");
         clientWriter.println(usernameField.getText());
@@ -60,6 +61,7 @@ public class LoginController {
     }
 
     @FXML
+    @SuppressWarnings("unused")
     public void createAccount(ActionEvent event){
         clientWriter.println("create");
         clientWriter.println(usernameField.getText());
