@@ -21,7 +21,7 @@
  4. Optimizing code
  5. Find a more affective way of storing data than using plain text files
 * _Current Objectives_
-** TODO Implement the functionality to change to the main application scene after entering correct credentials
-** TODO Design a basic, functioning app layout
-** TODO Consider refactoring current Server source file for less clutter
-** TODO Add on-screen indicators for the Server
+ 1) Implement the functionality to change to the main application scene after entering correct credentials
+ 2) Design a basic, functioning app layout
+ 3) Consider refactoring current Server source file for less clutter
+ 4) Add on-screen indicators for the Server
