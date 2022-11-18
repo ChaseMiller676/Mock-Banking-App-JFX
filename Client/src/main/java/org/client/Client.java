@@ -13,13 +13,16 @@ import java.util.Objects;
 public class Client extends Application {
 
     public static Socket client;
-
+    public static Stage stage;
     @Override
     public void start(Stage stage) throws IOException {
+        Client.stage = stage;
+        Client.stage.setTitle("Mock Bank Application");
+        Client.stage.setResizable(false);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("login.fxml")));
         Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        Client.stage.setScene(scene);
+        Client.stage.show();
     }
 
     public static void main(String[] args) {
