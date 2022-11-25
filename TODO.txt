@@ -1,0 +1,9 @@
+Change Log:
+ - Implemented a dialog window for opening a deposit
+Known Issues:
+ - Error occurs when opening a new deposit after the first one
+TODO:
+ - Fix known issues
+ - Figured out how to save deposits and associate them with their own account
+ - Figure out how to load existing deposits
+ - Implement restriction for each deposit requiring a unique name and type (either type 1 or 2)

@@ -52,7 +52,6 @@ public class LoginController {
         return serverOutput;
     }
 
-    @FXML
     @SuppressWarnings("unused")
     public void validate(ActionEvent event) throws IOException {
         clientWriter.println("login");
@@ -66,7 +65,6 @@ public class LoginController {
         }
     }
 
-    @FXML
     @SuppressWarnings("unused")
     public void createAccount(ActionEvent event){
         clientWriter.println("create");

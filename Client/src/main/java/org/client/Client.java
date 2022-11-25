@@ -14,6 +14,9 @@ public class Client extends Application {
 
     public static Socket client;
     public static Stage stage;
+    public static MainMenuController mainMenuController;
+    public static NewDepositMenu newDepositMenu;
+
     @Override
     public void start(Stage stage) throws IOException {
         Client.stage = stage;

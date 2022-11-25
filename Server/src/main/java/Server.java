@@ -24,46 +24,54 @@ public class Server {
             loadAccountBank();
             String usernameFieldInput;
             String passwordFieldInput;
-            String menuOption;
+            String menuOption = "";
 
-            while(client.isConnected()) {
+            while(client.isConnected()){
                 menuOption = serverReader.readLine();
 
-                if(menuOption.equals("login")) {
-                    usernameFieldInput = serverReader.readLine();
-                    passwordFieldInput = serverReader.readLine();
+                switch(menuOption){
+                    case "login":
+                        usernameFieldInput = serverReader.readLine();
+                        passwordFieldInput = serverReader.readLine();
 
-                    if (clientLogin(usernameFieldInput, passwordFieldInput)) {
-                        serverWriter.println(0);
-                    } else {
-                        serverWriter.println(1);
-                    }
-                }
-                if(menuOption.equals("create")){
-                    usernameFieldInput = serverReader.readLine();
-                    passwordFieldInput = serverReader.readLine();
+                        if (clientLogin(usernameFieldInput, passwordFieldInput)) {
+                            serverWriter.println(0);
+                        } else {
+                           serverWriter.println(1);
+                        }
+                        break;
+                    case "create":
+                        usernameFieldInput = serverReader.readLine();
+                        passwordFieldInput = serverReader.readLine();
 
-                    if(createAccount(usernameFieldInput, passwordFieldInput) == 0){
-                        saveAccounts();
-                        serverWriter.println(0);
-                    }
-                    else{
-                        serverWriter.println(1);
-                    }
+                        if(createAccount(usernameFieldInput, passwordFieldInput) == 0){
+                            saveAccounts();
+                            serverWriter.println(0);
+                        }
+                        else{
+                            serverWriter.println(1);
+                        }
+                        break;
+                    case "open":
+                        ;
+                        break;
+                    case "close": break;
+                    default: System.out.println("Client Disconnected");
                 }
             }
-
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private static void loadAccountBank() throws FileNotFoundException{
+    /*
+    Login Prompt Methods
+     */
+    static void loadAccountBank() throws FileNotFoundException{
         Scanner fileReader = new Scanner(accountBank);
 
         int i = 1;
         while(fileReader.hasNextLine()){
-            System.out.printf("Loop %d\n", i);
             String[] lineTokens = fileReader.nextLine().split("\\|");
             keyRing.add(lineTokens[0]);
             accounts.put(lineTokens[0], lineTokens[1]);
@@ -102,4 +110,10 @@ public class Server {
 
        return false;
     }
+
+    /*
+    Deposit Management Methods
+    */
+
+
 }
